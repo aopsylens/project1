@@ -1,2 +1,2 @@
 # project1
-Создание Docker Image c PHP-приложением с PHP+Apache на базе Amazon Linux c дальнейшим деплоем кластера в Kubernetes
+Создание Docker Image c PHP-приложением на базе Amazon Linux+PHP+Apache c дальнейшим деплоем кластера в Kubernetes
