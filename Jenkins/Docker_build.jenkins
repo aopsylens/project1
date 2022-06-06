@@ -13,7 +13,7 @@ pipeline {
         stage("docker login") {
             steps {
                 echo " ============== docker login =================="
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'registry',
+                withCredentials([[$class: 'UsernamePasswordMultiBinding',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
                 sh "docker login aopsylens --username $USERNAME --password $PASSWORD"
                     }
