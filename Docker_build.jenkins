@@ -10,13 +10,13 @@ pipeline {
     stages { 
         stage('SCM Checkout') {
             steps{
-            git 'https://github.com/aopsylens/project1.git'
+            sh 'git clone https://github.com/aopsylens/project1.git'
             }
         }
 
         stage('Build docker image') {
             steps {  
-                sh 'docker build -t aopsylens/k8sphp:$BUILD_NUMBER .'
+                sh 'docker build -t aopsylens/k8sphp:$BUILD_NUMBER ./project1'
             }
         }
         stage('login to dockerhub') {
