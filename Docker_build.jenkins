@@ -4,34 +4,35 @@ properties([disableConcurrentBuilds()])
 
 pipeline {
     agent any 
-    triggers { pollSCM('* * * * *') }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
-        timestamps()
+    environment {
+    DOCKERHUB_CREDENTIALS = credentials('aopsylens-dockerhub')
     }
-    stages {
-        stage("docker login") {
-            steps {
-                echo " ============== docker login =================="
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'registry',
-                withCredentials([[$class: 'UsernamePasswordMultiBinding',
-                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
-                    }
-             }
-        }
-        stage("create docker image") {
-            steps {
-                echo " ============== start building image =================="
-                dir ('docker') {
-                sh 'docker build -t aopsylens/k8sphp:latest . '
-                }
+    stages { 
+        stage('SCM Checkout') {
+            steps{
+            git 'https://github.com/ravdy/nodejs-demo.git'
             }
         }
-        stage("docker push") {
-            steps {
-                echo " ============== start pushing image =================="
-                sh 'docker push aopsylens/k8sphp:latest '
+
+        stage('Build docker image') {
+            steps {  
+                sh 'docker build -t aopsylens/k8sphp:$BUILD_NUMBER .'
             }
+        }
+        stage('login to dockerhub') {
+            steps{
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('push image') {
+            steps{
+                sh 'docker push aopsylens/k8sphp:$BUILD_NUMBER'
+            }
+        }
+}
+post {
+        always {
+            sh 'docker logout'
         }
     }
 }
