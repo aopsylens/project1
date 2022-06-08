@@ -29,6 +29,12 @@ pipeline {
                 sh 'docker push aopsylens/k8sphp:$BUILD_NUMBER'
             }
         }
+        stage('minikube deploy helm') {
+            steps{
+            sh 'minikube start'
+            sh 'helm install app-$BUILD_NUMBER ./project1/k8s/Chart'    
+            }
+        }
 }
 post {
         always {
